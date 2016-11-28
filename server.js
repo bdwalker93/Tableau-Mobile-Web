@@ -1,24 +1,25 @@
-var express = require("express");
-var app     = express();
-var path    = require("path");
+const express = require("express");
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const morgan = require('morgan')
+const Core = require('./src/core');
 
+app.use(morgan('dev'));
+app.use(express.static('public'));
 
-app.use(express.static('.'));
+io.on('connection', function(socket) {
+  const core = Core(socket);
 
-app.get('/',function(req,res){
-  res.sendFile(path.join(__dirname+'/index.html'));
-  //__dirname : It will resolve to your project folder.
+  socket.on('action', function(action) {
+    switch (action.type) {
+      case 'DO_LOGIN': {
+        core.login(action.username, action.password)
+      }
+    }
+  });
 });
 
-app.get('/App',function(req,res){
-  res.sendFile(path.join(__dirname+'/browser.js'));
-});
-
-app.get('/sitemap',function(req,res){
-  res.sendFile(path.join(__dirname+'/sitemap.html'));
-});
-
-app.listen(3000);
+http.listen(3000);
 
 console.log("Running at Port 3000");
-
