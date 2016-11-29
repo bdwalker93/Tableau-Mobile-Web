@@ -1,12 +1,18 @@
-const tableau = require('./tableau')
+const tableau = require('./tableau');
 
-module.exports = function(socket) {
+const SITE_NAME = "UCI";
+
+const uuid = require('uuid').v4;
+
+module.exports = function(storage, socket) {
   return {
     login: function(username, password) {
-      tableau.signIn("Brett", "ucitableau", "UCI").then(({ token, siteId, userId }) => {
+      return tableau.signIn(username, password, SITE_NAME).then((auth) => {
+        const tok = uuid();
+        return storage.setItem('tokens:'+tok, auth).then(()=>tok);
+      }).then(function(token) {
         socket.emit('action', {
-          type: "LOGIN_SUCCESS",
-          token: "??"
+          type: "LOGIN_SUCCESS", token
         })
         socket.emit('navigate', "/workbooks")
       }).catch(function(err) {
@@ -15,6 +21,17 @@ module.exports = function(socket) {
           error: err.message
         })
       });
+    },
+    checkAuth: function(tok) {
+      return storage.getItem('tokens:'+tok).then((auth)=>{
+        if ( !auth ) throw new Error('invalid token');
+      }).catch((err)=> {
+        socket.emit('action', {
+          type: "LOGIN_FAILURE",
+          error: err.message
+        })
+        socket.emit('navigate', "/")
+      })
     }
   }
 }

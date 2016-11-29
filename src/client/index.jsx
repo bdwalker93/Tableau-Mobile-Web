@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, hashHistory } from 'react-router';
+import { Router, Route, browserHistory } from 'react-router';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { reducer as formReducer } from 'redux-form'
@@ -37,14 +37,17 @@ socket.on('action', action => {
 })
 
 socket.on('navigate', (path) => {
-  hashHistory.push(path);
+  browserHistory.push(path);
 })
 
 function checkAuth(nextState, replaceState) {
-  let { app:{ isLoggedIn } } = store.getState();
+  console.log('onenter');
+  let { app:{ isLoggedIn, token } } = store.getState();
   let { location: { pathname } } = nextState;
 
+
   if ( isLoggedIn ) {
+    socket.emit('action', { type: "CHECK_AUTH", token })
     if (pathname === '/') {
       replaceState('/workbooks')
     }
@@ -58,7 +61,7 @@ function checkAuth(nextState, replaceState) {
 // which are all wrapped in the App component, which contains the navigation etc
 ReactDOM.render(
   <Provider store={store}>
-    <Router history={hashHistory}>
+    <Router history={browserHistory}>
       <Route component={App}>
         <Route onEnter={checkAuth}>
           <Route path="/" component={LoginPage} />
