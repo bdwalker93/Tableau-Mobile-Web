@@ -1,0 +1,10 @@
+limitations
+
+not adapted for TableauOnline
+
+to use that, we need to implement their SSO SAML scheme, see the following
+
+* http://help.metricinsights.com/s/R2/m/61790/l/237742-using-sso-on-tableau-server
+* https://community.tableau.com/thread/157541
+* http://www.theinformationlab.co.uk/2014/02/04/authenticating-external-tableau-server-using-internal-ad/
+* http://onlinehelp.tableau.com/current/online/en-us/authentication_ovw.htm

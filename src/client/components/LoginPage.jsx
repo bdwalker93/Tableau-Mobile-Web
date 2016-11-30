@@ -3,13 +3,23 @@ import LoginForm from './LoginForm';
 import { connect } from 'react-redux';
 import * as actionCreators from '../action-creators';
 
+import './LoginPage.less';
+
 const Login = ({
-  doLogin
+  doLogin,
+  loginError
 }) =>
 <div>
+  { loginError ? <div className="login-error">{loginError}</div> : null }
   <LoginForm onSubmit={({ username, password }) => {
     doLogin( username, password )
   }}/>
 </div>
 
-export const LoginPage = connect(null, actionCreators)(Login);
+function mapStateToProps(state) {
+  return {
+    loginError: state.app.loginError
+  }
+}
+
+export const LoginPage = connect(mapStateToProps, actionCreators)(Login);

@@ -8,6 +8,8 @@ module.exports = function(storage, socket) {
   return {
     login: function(username, password) {
       return tableau.signIn(username, password, SITE_NAME).then((auth) => {
+        // auth : { token, userId, siteId }
+        // we don't store username and password
         const tok = uuid();
         return storage.setItem('tokens:'+tok, auth).then(()=>tok);
       }).then(function(token) {
@@ -23,6 +25,8 @@ module.exports = function(storage, socket) {
       });
     },
     checkAuth: function(tok) {
+      // TODO
+      // ask tableau if this is legit
       return storage.getItem('tokens:'+tok).then((auth)=>{
         if ( !auth ) throw new Error('invalid token');
       }).catch((err)=> {

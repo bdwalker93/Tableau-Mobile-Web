@@ -1,7 +1,8 @@
 const tok = localStorage.getItem('token');
 const init = {
   isLoggedIn: !!tok,
-  token: tok
+  token: tok,
+  loginError: null
 }
 
 export default function(state = init, action) {
@@ -13,7 +14,7 @@ export default function(state = init, action) {
     }
     case 'LOGIN_FAILURE': {
       localStorage.removeItem('token');
-      return init;
+      return { isLoggedIn: false, token: null, loginError: action.error };
     }
   }
   return state

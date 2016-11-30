@@ -1,12 +1,17 @@
 const request = require('request');
 const xml2js = require('xml2js');
 
+const SERVER = "https://tableau.ics.uci.edu";
+
+// See notes about SSO and SAML ...
+//const SERVER = "https://10az.online.tableau.com";
+
 module.exports = {
   signIn: (name, password, site) => {
     return new Promise(function(resolve, reject) {
       request({
         method: 'POST',
-        url: 'https://tableau.ics.uci.edu/api/2.3/auth/signin',
+        url: SERVER+'/api/2.3/auth/signin',
         body: `
         <tsRequest>
         <credentials name="${name}" password="${password}" >
