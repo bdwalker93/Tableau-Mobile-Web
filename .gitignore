@@ -1,4 +1,4 @@
 node_modules
 storage
-public/bundle
+public/bundle.*
 public/*-*-*.png
