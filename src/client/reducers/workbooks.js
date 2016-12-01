@@ -1,21 +1,29 @@
-const init = []
+const init = {
+  workbookIds: [],
+  workbooksById: {},
+}
 
 export default function(state = init, action) {
   switch (action.type) {
     case 'SET_WORKBOOKS': {
-      return action.workbooks
+      return action.workbooks.reduce((memo, wb) => {
+        let obj = {...memo.workbooksById};
+        obj[wb.id] = wb;
+        return {
+          workbookIds: [...memo.workbookIds, wb.id],
+          workbooksById: obj
+        }
+      }, init);
     }
-  case 'UPDATE_WORKBOOK_IMAGE': {
-    const index = state.findIndex(wb=> wb.id === action.id);
-    const wb = state[index];
-    //wb.thumbnail = 
-    //console.log('updated workbook i mage!', wb.thumbnail);
-    return [
-      ...state.slice(0, index-1),
-      { ...wb, thumbnail: action.publicPath },
-      ...state.slice(index+1, state.length)
-    ]
-  }
+    case 'UPDATE_WORKBOOK_IMAGE': {
+      let obj = {...state.workbooksById};
+      let wb = obj[action.id];
+      wb.thumbnail = action.publicPath;
+      return {
+        workbookIds: state.workbookIds,
+        workbooksById: obj
+      }
+    }
   }
   return state
 }

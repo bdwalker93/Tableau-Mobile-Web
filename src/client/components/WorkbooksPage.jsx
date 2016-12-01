@@ -2,27 +2,20 @@ import React from 'react';
 import { connect } from 'react-redux';
 import * as actionCreators from '../action-creators';
 
+import { WorkbookListItem } from './WorkbookListItem';
+
 const Workbooks = ({
-  workbooks
+  workbooksById,
+  workbookIds
 }) =>
 <div>
   <ul>
-    { workbooks.map(wb => <li key={wb.id}>
-      <pre>{JSON.stringify(wb, null, 2)}</pre>
-      <img src={wb.thumbnail} />
-      {wb.thumbnail}
-      {wb.projectName}
-      {wb.ownerName}
-      {wb.updateAt}
-      {wb.site}
-    </li>) }
+    { workbookIds.map(id => <WorkbookListItem key={id} workbook={workbooksById[id]} />)}
   </ul>
 </div>;
 
 function mapStateToProps(state) {
-  return {
-    workbooks: state.workbooks
-  }
+  return state.workbooks
 }
 
 export const WorkbooksPage = connect(mapStateToProps, actionCreators)(Workbooks);
