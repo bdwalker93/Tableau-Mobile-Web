@@ -69,11 +69,15 @@ var bundle =
 	
 	var _App2 = _interopRequireDefault(_App);
 	
-	var _Workbooks = __webpack_require__(443);
+	var _WorkbooksPage = __webpack_require__(498);
 	
 	var _app = __webpack_require__(444);
 	
 	var _app2 = _interopRequireDefault(_app);
+	
+	var _workbooks = __webpack_require__(497);
+	
+	var _workbooks2 = _interopRequireDefault(_workbooks);
 	
 	var _socket = __webpack_require__(445);
 	
@@ -91,7 +95,8 @@ var bundle =
 	
 	var reducer = (0, _redux.combineReducers)({
 	  form: _reduxForm.reducer,
-	  app: _app2.default
+	  app: _app2.default,
+	  workbooks: _workbooks2.default
 	});
 	
 	var remoteActionMiddleware = function remoteActionMiddleware(socket) {
@@ -121,8 +126,6 @@ var bundle =
 	});
 	
 	function checkAuth(nextState, replaceState) {
-	  console.log('onenter');
-	
 	  var _store$getState = store.getState(),
 	      _store$getState$app = _store$getState.app,
 	      isLoggedIn = _store$getState$app.isLoggedIn,
@@ -141,6 +144,13 @@ var bundle =
 	  }
 	}
 	
+	function loadWorkbooks() {
+	  var _store$getState2 = store.getState(),
+	      token = _store$getState2.app.token;
+	
+	  socket.emit('action', actionCreators.loadWorkbooks(token));
+	}
+	
 	// Mostly boilerplate, except for the Routes. These are the pages you can go to,
 	// which are all wrapped in the App component, which contains the navigation etc
 	_reactDom2.default.render(_react2.default.createElement(
@@ -156,7 +166,7 @@ var bundle =
 	        _reactRouter.Route,
 	        { onEnter: checkAuth },
 	        _react2.default.createElement(_reactRouter.Route, { path: '/', component: _LoginPage.LoginPage }),
-	        _react2.default.createElement(_reactRouter.Route, { path: '/workbooks', component: _Workbooks.Workbooks })
+	        _react2.default.createElement(_reactRouter.Route, { path: '/workbooks', component: _WorkbooksPage.WorkbooksPage, onEnter: loadWorkbooks })
 	      )
 	    )
 	  )
@@ -37480,11 +37490,20 @@ var bundle =
 	  value: true
 	});
 	exports.doLogin = doLogin;
+	exports.loadWorkbooks = loadWorkbooks;
 	function doLogin(username, password) {
 	  return {
 	    meta: { remote: true },
 	    type: "DO_LOGIN",
 	    username: username, password: password
+	  };
+	}
+	
+	function loadWorkbooks(token) {
+	  return {
+	    meta: { remote: true },
+	    type: "LOAD_WORKBOOKS",
+	    token: token
 	  };
 	}
 
@@ -37861,35 +37880,7 @@ var bundle =
 	});
 
 /***/ },
-/* 443 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.Workbooks = undefined;
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
-	
-	var Workbooks = exports.Workbooks = function Workbooks(_ref) {
-	  _objectDestructuringEmpty(_ref);
-	
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    'sup mofo im workbooks'
-	  );
-	};
-
-/***/ },
+/* 443 */,
 /* 444 */
 /***/ function(module, exports) {
 
@@ -37903,7 +37894,6 @@ var bundle =
 	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : init;
 	  var action = arguments[1];
 	
-	  console.log('reducer got thing...', action);
 	  switch (action.type) {
 	    case 'LOGIN_SUCCESS':
 	      {
@@ -46125,6 +46115,107 @@ var bundle =
 	};
 	
 
+
+/***/ },
+/* 497 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	exports.default = function () {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : init;
+	  var action = arguments[1];
+	
+	  switch (action.type) {
+	    case 'SET_WORKBOOKS':
+	      {
+	        return action.workbooks;
+	      }
+	    case 'UPDATE_WORKBOOK_IMAGE':
+	      {
+	        var index = state.findIndex(function (wb) {
+	          return wb.id === action.id;
+	        });
+	        var wb = state[index];
+	        //wb.thumbnail = 
+	        //console.log('updated workbook i mage!', wb.thumbnail);
+	        return [].concat(_toConsumableArray(state.slice(0, index - 1)), [_extends({}, wb, { thumbnail: action.publicPath })], _toConsumableArray(state.slice(index + 1, state.length)));
+	      }
+	  }
+	  return state;
+	};
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	var init = [];
+
+/***/ },
+/* 498 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.WorkbooksPage = undefined;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _actionCreators = __webpack_require__(437);
+	
+	var actionCreators = _interopRequireWildcard(_actionCreators);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Workbooks = function Workbooks(_ref) {
+	  var workbooks = _ref.workbooks;
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'ul',
+	      null,
+	      workbooks.map(function (wb) {
+	        return _react2.default.createElement(
+	          'li',
+	          { key: wb.id },
+	          _react2.default.createElement(
+	            'pre',
+	            null,
+	            JSON.stringify(wb, null, 2)
+	          ),
+	          _react2.default.createElement('img', { src: wb.thumbnail }),
+	          wb.thumbnail,
+	          wb.projectName,
+	          wb.ownerName,
+	          wb.updateAt,
+	          wb.site
+	        );
+	      })
+	    )
+	  );
+	};
+	
+	function mapStateToProps(state) {
+	  return {
+	    workbooks: state.workbooks
+	  };
+	}
+	
+	var WorkbooksPage = exports.WorkbooksPage = (0, _reactRedux.connect)(mapStateToProps, actionCreators)(Workbooks);
 
 /***/ }
 /******/ ]);

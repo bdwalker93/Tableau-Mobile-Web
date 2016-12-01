@@ -38,5 +38,48 @@ module.exports = {
         })
       })
     });
+  },
+  queryWorkbooksForUser: (token, siteId) => {
+    return new Promise(function(resolve, reject) {
+      request({
+        url: `${SERVER}/api/2.3/sites/${siteId}/workbooks`,
+          headers: {
+          "X-Tableau-Auth": token
+        }
+      }, function (error, response, body) {
+        if (error) return reject(error);
+        if (response.statusCode !== 200) {
+          console.log(response.statusCode);
+        }
+        xml2js.parseString(body, function(err, res) {
+          if ( err ) return reject(error);
+
+          resolve(res.tsResponse.workbooks[0].workbook.map(wb=>{
+            return Object.assign({}, wb.$, {
+              projectId: wb.project[0].$.id,
+              projectName: wb.project[0].$.name,
+              ownerId: wb.owner[0].$.id,
+            })
+          }))
+        });
+      })
+    });
+  },
+  getPreviewImageForWorkbook: (token, siteId, workbookId) => {
+    return new Promise(function(resolve, reject) {
+      request({
+        encoding: null,
+        url: `https://tableau.ics.uci.edu/api/2.3/sites/${siteId}/workbooks/${workbookId}/previewImage`,
+          headers: {
+          "X-Tableau-Auth": token
+        }
+      }, function (error, response, body) {
+        if (error) return reject(error);
+        if (response.statusCode !== 200) {
+          reject(response.statusCode);
+        }
+        resolve({ png: body })
+      })
+    });
   }
 }

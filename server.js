@@ -32,6 +32,8 @@ storage.init({
           return core.login(action.username, action.password);
         case 'CHECK_AUTH':
           return core.checkAuth(action.token);
+        case 'LOAD_WORKBOOKS':
+          return core.loadWorkbooks(action.token);
       }
     });
   });

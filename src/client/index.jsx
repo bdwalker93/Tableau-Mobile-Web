@@ -6,8 +6,9 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { reducer as formReducer } from 'redux-form'
 import { LoginPage } from './components/LoginPage';
 import App from './components/App';
-import { Workbooks } from './components/Workbooks';
+import { WorkbooksPage } from './components/WorkbooksPage';
 import appReducer from './reducers/app';
+import workbooksReducer from './reducers/workbooks';
 import io from 'socket.io-client';
 import * as actionCreators from './action-creators';
 
@@ -15,7 +16,8 @@ const socket = io();
 
 const reducer = combineReducers({
   form: formReducer,
-  app: appReducer
+  app: appReducer,
+  workbooks: workbooksReducer
 });
 
 const remoteActionMiddleware = socket => store => next => action => {
@@ -41,10 +43,8 @@ socket.on('navigate', (path) => {
 })
 
 function checkAuth(nextState, replaceState) {
-  console.log('onenter');
   let { app:{ isLoggedIn, token } } = store.getState();
   let { location: { pathname } } = nextState;
-
 
   if ( isLoggedIn ) {
     socket.emit('action', { type: "CHECK_AUTH", token })
@@ -57,6 +57,11 @@ function checkAuth(nextState, replaceState) {
   }
 }
 
+function loadWorkbooks() {
+  let { app:{ token } } = store.getState();
+  socket.emit('action', actionCreators.loadWorkbooks(token))
+}
+
 // Mostly boilerplate, except for the Routes. These are the pages you can go to,
 // which are all wrapped in the App component, which contains the navigation etc
 ReactDOM.render(
@@ -65,7 +70,7 @@ ReactDOM.render(
       <Route component={App}>
         <Route onEnter={checkAuth}>
           <Route path="/" component={LoginPage} />
-          <Route path="/workbooks" component={Workbooks} />
+          <Route path="/workbooks" component={WorkbooksPage} onEnter={loadWorkbooks} />
         </Route>
       </Route>
     </Router>
