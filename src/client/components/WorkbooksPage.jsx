@@ -4,17 +4,23 @@ import * as actionCreators from '../action-creators';
 
 import { WorkbookListItem } from './WorkbookListItem';
 
+import './WorkbooksPage.less';
+
 const Workbooks = ({
   workbooksById,
-  workbookIds
+  workbookIds,
 }) =>
-<div>
-  <ul>
-    { workbookIds.map(id => <WorkbookListItem key={id} workbook={workbooksById[id]} />)}
-  </ul>
-</div>;
+<div className="workbook-page">
+  { workbookIds.map(id => <WorkbookListItem key={id}
+    workbook={workbooksById[id]} isFav={false}
+    onFavorite={() => {
+      console.log('favorite this workbook', id);
+    }}
+  />)}
+</div>
 
 function mapStateToProps(state) {
+  console.log(state.workbooks);
   return state.workbooks
 }
 

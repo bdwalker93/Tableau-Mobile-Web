@@ -2,3 +2,8 @@ node_modules
 storage
 public/bundle.*
 public/*-*-*.png
+public/*.wof*
+public/*.eot
+public/*.svg
+public/*.ttf
+public/*.eot

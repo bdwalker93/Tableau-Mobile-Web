@@ -7,10 +7,14 @@ import { reducer as formReducer } from 'redux-form'
 import { LoginPage } from './components/LoginPage';
 import App from './components/App';
 import { WorkbooksPage } from './components/WorkbooksPage';
+import { VizPage } from './components/VizPage';
 import appReducer from './reducers/app';
 import workbooksReducer from './reducers/workbooks';
 import io from 'socket.io-client';
 import * as actionCreators from './action-creators';
+
+import 'font-awesome/less/font-awesome.less';
+import 'bootstrap/less/bootstrap.less';
 
 const socket = io();
 
@@ -71,6 +75,7 @@ ReactDOM.render(
         <Route onEnter={checkAuth}>
           <Route path="/" component={LoginPage} />
           <Route path="/workbooks" component={WorkbooksPage} onEnter={loadWorkbooks} />
+          <Route path="/viz/:workbookId" component={VizPage} />
         </Route>
       </Route>
     </Router>

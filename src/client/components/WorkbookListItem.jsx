@@ -1,19 +1,32 @@
 import React from 'react';
+import { Link } from 'react-router'
+
+import moment from 'moment';
 
 export const WorkbookListItem = ({
   workbook: {
     id,
     thumbnail,
+    name,
     projectName,
-    ownerName,
     updatedAt,
-    site
-  }
+    size
+  },
+  isFav,
+  onFavorite
 }) =>
-<li>
-  { thumbnail ? <img src={thumbnail} /> : <span>Loading thumbnail...</span>}
-  <p>{projectName}</p>
-  <p>{ownerName}</p>
-  <p>{updatedAt}</p>
-  <p>{site}</p>
-</li>
+<div className={`row workbook-item ${parseInt(size) > 1 ? 'multi' : ''}`}>
+  <div className="col-xs-6">
+    <Link to={`/viz/${id}`}  className="workbook-thumbnail-container">
+      { thumbnail ? <img className="workbook-thumbnail" src={thumbnail} /> : <span>Loading thumbnail...</span>}
+    </Link>
+  </div>
+  <div className="col-xs-6">
+    <p>{name}</p>
+    <p>{moment(updatedAt).format('L, LT')}</p>
+    <p>{projectName}</p>
+    <button className="fav-star" onClick={onFavorite}>
+      <i className={`fa fa-star${isFav ? '' : '-o'}`}/>
+    </button>
+  </div>
+</div>
