@@ -1,12 +1,13 @@
 const request = require('request');
 const xml2js = require('xml2js');
+const Promise = require('bluebird');
 
 const SERVER = "https://tableau.ics.uci.edu";
 
 // See notes about SSO and SAML ...
-//const SERVER = "https://10az.online.tableau.com";
+//const aSERVER = "https://10az.online.tableau.com";
 
-module.exports = {
+const tableau = module.exports = {
   signIn: (name, password, site) => {
     return new Promise(function(resolve, reject) {
       request({
@@ -54,13 +55,17 @@ module.exports = {
         xml2js.parseString(body, function(err, res) {
           if ( err ) return reject(error);
 
-          resolve(res.tsResponse.workbooks[0].workbook.map(wb=>{
-            return Object.assign({}, wb.$, {
-              projectId: wb.project[0].$.id,
-              projectName: wb.project[0].$.name,
-              ownerId: wb.owner[0].$.id,
+          resolve(Promise.mapSeries(res.tsResponse.workbooks[0].workbook, (wb)=>{
+            return tableau.getUserInformation(token, siteId, wb.owner[0].$.id).then((ownerName) =>{
+              console.log(ownerName);
+              return Object.assign({}, wb.$, {
+                projectId: wb.project[0].$.id,
+                projectName: wb.project[0].$.name,
+                ownerName
+              })
             })
-          }))
+          })
+          )
         });
       })
     });
@@ -92,20 +97,15 @@ module.exports = {
       }, function (error, response, body) {
         if (error) return reject(error);
         if (response.statusCode !== 200) {
-          console.log(response.statusCode);
+          reject(response.statusCode);
         }
+        else{
         xml2js.parseString(body, function(err, res) {
           if ( err ) return reject(error);
-         console.log(res.tsResponse.user[0].$.fullName);
-          return;
-          resolve(res.tsResponse.workbooks[0].workbook.map(wb=>{
-            return Object.assign({}, wb.$, {
-              projectId: wb.project[0].$.id,
-              projectName: wb.project[0].$.name,
-              ownerId: wb.owner[0].$.id,
-            })
-          }))
+
+          resolve(res.tsResponse.user[0].$.fullName);
         });
+        }
       })
     });
   },

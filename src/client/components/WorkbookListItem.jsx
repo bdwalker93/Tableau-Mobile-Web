@@ -8,6 +8,7 @@ export const WorkbookListItem = ({
     id,
     thumbnail,
     name,
+    ownerName,
     projectName,
     updatedAt,
     size
@@ -23,6 +24,7 @@ export const WorkbookListItem = ({
   </div>
   <div className="col-xs-6">
     <p>{name}</p>
+    <p>{ownerName}</p>
     <p>{moment(updatedAt).format('L, LT')}</p>
     <p>{projectName}</p>
     <button className="fav-star" onClick={onFavorite}>
