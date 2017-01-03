@@ -50,6 +50,8 @@ module.exports = function(storage, socket) {
             return tableau.getPreviewImageForWorkbook(token, siteId, wb.id).then(({png}) => {
               const publicPath = '/'+wb.id+'.png';
               const path = __dirname+'/../public'+publicPath;
+
+              tableau.getUserInformation(token, siteId, wb.ownerId);
               return Promise.promisify(fs.writeFile)(path, png).then(function() {
                 socket.emit('action', {
                   type: "UPDATE_WORKBOOK_IMAGE",

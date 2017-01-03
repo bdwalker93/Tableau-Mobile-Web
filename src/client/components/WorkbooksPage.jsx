@@ -20,7 +20,7 @@ const Workbooks = ({
 </div>
 
 function mapStateToProps(state) {
-  console.log(state.workbooks);
+  // console.log(state.workbooks);
   return state.workbooks
 }
 

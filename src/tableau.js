@@ -81,5 +81,32 @@ module.exports = {
         resolve({ png: body })
       })
     });
-  }
+  },
+  getUserInformation: (token, siteId, userId) => {
+    return new Promise(function(resolve, reject) {
+      request({
+        url: `${SERVER}/api/2.3/sites/${siteId}/users/${userId}`,
+          headers: {
+          "X-Tableau-Auth": token
+        }
+      }, function (error, response, body) {
+        if (error) return reject(error);
+        if (response.statusCode !== 200) {
+          console.log(response.statusCode);
+        }
+        xml2js.parseString(body, function(err, res) {
+          if ( err ) return reject(error);
+         console.log(res.tsResponse.user[0].$.fullName);
+          return;
+          resolve(res.tsResponse.workbooks[0].workbook.map(wb=>{
+            return Object.assign({}, wb.$, {
+              projectId: wb.project[0].$.id,
+              projectName: wb.project[0].$.name,
+              ownerId: wb.owner[0].$.id,
+            })
+          }))
+        });
+      })
+    });
+  },
 }
