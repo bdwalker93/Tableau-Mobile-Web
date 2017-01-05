@@ -33,7 +33,9 @@ storage.init({
         case 'CHECK_AUTH':
           return core.checkAuth(action.token);
         case 'LOAD_WORKBOOKS':
-          return core.loadWorkbooks(action.token);
+          return core.loadWorkbooks(action.meta.token);
+        case 'SET_FAVORITE_WORKBOOK':
+          return core.addWorkbookToFavorites(action.meta.token);
       }
     });
   });

@@ -6,10 +6,17 @@ export function doLogin(username, password) {
   }
 }
 
-export function loadWorkbooks(token) {
+export function loadWorkbooks() {
   return {
     meta: { remote: true },
     type: "LOAD_WORKBOOKS",
-    token
+  }
+}
+export function setFavoriteWorkbook(workbookId) {
+  console.log("set favorite wb action creator");
+  return {
+    meta: { remote: true },
+    type: "SET_FAVORITE_WORKBOOK",
+    workbookId,
   }
 }

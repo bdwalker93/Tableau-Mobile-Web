@@ -26,6 +26,9 @@ const reducer = combineReducers({
 
 const remoteActionMiddleware = socket => store => next => action => {
   if (action.meta && action.meta.remote) {
+    action.meta = {token: store.getState().app.token};
+    console.log("emitting action");
+    console.log(action);
     socket.emit('action', action);
   }
   next(action);
@@ -38,7 +41,7 @@ const createStoreWithMiddleware = applyMiddleware(
 const store = createStoreWithMiddleware(reducer);
 
 socket.on('action', action => {
-  //console.log('incoming socket event. dispatching', action);
+  console.log('incoming socket event. dispatching', action);
   store.dispatch(action);
 })
 
@@ -62,8 +65,8 @@ function checkAuth(nextState, replaceState) {
 }
 
 function loadWorkbooks() {
-  let { app:{ token } } = store.getState();
-  socket.emit('action', actionCreators.loadWorkbooks(token))
+  //socket.emit('action', actionCreators.loadWorkbooks())
+  store.dispatch(actionCreators.loadWorkbooks());
 }
 
 // Mostly boilerplate, except for the Routes. These are the pages you can go to,

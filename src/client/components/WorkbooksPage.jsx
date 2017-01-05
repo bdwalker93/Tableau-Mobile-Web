@@ -9,12 +9,14 @@ import './WorkbooksPage.less';
 const Workbooks = ({
   workbooksById,
   workbookIds,
+  setFavoriteWorkbook
 }) =>
 <div className="workbook-page">
   { workbookIds.map(id => <WorkbookListItem key={id}
     workbook={workbooksById[id]} isFav={false}
     onFavorite={() => {
-      console.log('favorite this workbook', id);
+      console.log('favorite this workbook', workbooksById[id]);
+      setFavoriteWorkbook(id);
     }}
   />)}
 </div>

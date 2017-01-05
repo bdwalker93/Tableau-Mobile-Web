@@ -9,17 +9,20 @@ const fs = require('fs');
 module.exports = function(storage, socket) {
   return {
     login: function(username, password) {
+      console.log("hitting login", username, password);
       return tableau.signIn(username, password, SITE_NAME).then((auth) => {
         // auth : { token, userId, siteId }
         // we don't store username and password
         const tok = uuid();
         return storage.setItem('tokens:'+tok, auth).then(()=>tok);
       }).then(function(token) {
+        console.log("loggedin");
         socket.emit('action', {
           type: "LOGIN_SUCCESS", token
         })
         socket.emit('navigate', "/workbooks")
       }).catch(function(err) {
+        console.log("failed");
         socket.emit('action', {
           type: "LOGIN_FAILURE",
           error: err.message
@@ -70,6 +73,22 @@ module.exports = function(storage, socket) {
         //})
         //socket.emit('navigate', "/")
       })
+    },
+    addWorkbookToFavorites: function(tok, userId, workbookId){
+      return storage.getItem('tokens:'+tok).then(({token, userId, siteId})=>{
+        return tableau.addWorkbookToFavorites(token, siteId, userId, workbookId).then((workbooks) => {
+          console.log("returned from add wb", workbooks);
+        });
+      }).catch((err)=> {
+        console.log(err);
+        //socket.emit('action', {
+        //  type: "LOGIN_FAILURE",
+        //  error: err.message
+        //})
+        //socket.emit('navigate', "/")
+      })
+
+
     }
   }
 }

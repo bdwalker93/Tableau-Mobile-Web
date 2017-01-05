@@ -9,6 +9,7 @@ const SERVER = "https://tableau.ics.uci.edu";
 
 const tableau = module.exports = {
   signIn: (name, password, site) => {
+console.log("in tableau sign in");
     return new Promise(function(resolve, reject) {
       request({
         method: 'POST',
@@ -31,7 +32,6 @@ const tableau = module.exports = {
             var token = cred.$.token;
             var siteId = cred.site[0].$.id;
             var userId = cred.user[0].$.id;
-
             resolve({ token, siteId, userId });
           } catch (e) {
             reject(e);
@@ -57,7 +57,6 @@ const tableau = module.exports = {
 
           resolve(Promise.mapSeries(res.tsResponse.workbooks[0].workbook, (wb)=>{
             return tableau.getUserInformation(token, siteId, wb.owner[0].$.id).then((ownerName) =>{
-              console.log(ownerName);
               return Object.assign({}, wb.$, {
                 projectId: wb.project[0].$.id,
                 projectName: wb.project[0].$.name,
@@ -103,6 +102,35 @@ const tableau = module.exports = {
         xml2js.parseString(body, function(err, res) {
           if ( err ) return reject(error);
 
+          resolve(res.tsResponse.user[0].$.fullName);
+        });
+        }
+      })
+    });
+  },
+  addWorkbookToFavorites: (token, siteId, userId, workbookId) => {
+    //TODO: might want to change the favorite label to something other than the workbookId
+    return new Promise(function(resolve, reject) {
+      request({
+        method: 'PUT',
+        url: `${SERVER}/api/2.3/sites/${siteId}/favorites/${userId}`,
+        body: `
+        <tsRequest>
+        <favorite label="${workbookId}" >
+        <workbook id="${workbookId}" />
+        </favorite>
+        </tsRequest>
+        ` 
+      }, function (error, response, body) {
+        if (error) return reject(error);
+        if (response.statusCode !== 200) {
+          reject(response.statusCode);
+        }
+        else{
+        xml2js.parseString(body, function(err, res) {
+          if ( err ) return reject(error);
+console.log(res);
+return;
           resolve(res.tsResponse.user[0].$.fullName);
         });
         }
