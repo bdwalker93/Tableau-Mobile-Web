@@ -132,9 +132,7 @@ console.log("in tableau sign in");
         else{
         xml2js.parseString(body, function(err, res) {
           if ( err ) return reject(error);
-console.log(res);
-return;
-          resolve(res.tsResponse.user[0].$.fullName);
+          resolve(res.tsResponse.favorites[0].favorite);
         });
         }
       })

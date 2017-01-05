@@ -76,8 +76,8 @@ module.exports = function(storage, socket) {
     },
     addWorkbookToFavorites: function(tok, workbookId){
       return storage.getItem('tokens:'+tok).then(({token, userId, siteId})=>{
-        return tableau.addWorkbookToFavorites(token, siteId, userId, workbookId).then((workbooks) => {
-          console.log("returned from add wb", workbooks);
+        return tableau.addWorkbookToFavorites(token, siteId, userId, workbookId).then((favorites) => {
+          console.log("returned from add wb", favorites);
         });
       }).catch((err)=> {
         console.log(err);
