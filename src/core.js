@@ -74,7 +74,7 @@ module.exports = function(storage, socket) {
         //socket.emit('navigate', "/")
       })
     },
-    addWorkbookToFavorites: function(tok, userId, workbookId){
+    addWorkbookToFavorites: function(tok, workbookId){
       return storage.getItem('tokens:'+tok).then(({token, userId, siteId})=>{
         return tableau.addWorkbookToFavorites(token, siteId, userId, workbookId).then((workbooks) => {
           console.log("returned from add wb", workbooks);

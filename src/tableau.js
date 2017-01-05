@@ -114,6 +114,9 @@ console.log("in tableau sign in");
       request({
         method: 'PUT',
         url: `${SERVER}/api/2.3/sites/${siteId}/favorites/${userId}`,
+          headers: {
+          "X-Tableau-Auth": token
+        },
         body: `
         <tsRequest>
         <favorite label="${workbookId}" >

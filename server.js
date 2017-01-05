@@ -35,7 +35,7 @@ storage.init({
         case 'LOAD_WORKBOOKS':
           return core.loadWorkbooks(action.meta.token);
         case 'SET_FAVORITE_WORKBOOK':
-          return core.addWorkbookToFavorites(action.meta.token);
+          return core.addWorkbookToFavorites(action.meta.token, action.workbookId);
       }
     });
   });
