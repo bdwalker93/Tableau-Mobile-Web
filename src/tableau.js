@@ -138,4 +138,27 @@ console.log("in tableau sign in");
       })
     });
   },
+  deleteWorkbookFromFavorites: (token, siteId, userId, workbookId) => {
+    //TODO: might want to change the favorite label to something other than the workbookId
+    return new Promise(function(resolve, reject) {
+      request({
+        method: 'DELETE',
+        url: `${SERVER}/api/2.3/sites/${siteId}/favorites/${userId}/workbooks/${workbookId}`,
+          headers: {
+          "X-Tableau-Auth": token
+        },
+      }, function (error, response, body) {
+        if (error) return reject(error);
+        if (response.statusCode !== 200) {
+          reject(response.statusCode);
+        }
+        else{
+        xml2js.parseString(body, function(err, res) {
+          if ( err ) return reject(error);
+          resolve(res.tsResponse.favorites[0].favorite);
+        });
+        }
+      })
+    });
+  },
 }
