@@ -24,8 +24,9 @@ export default function(state = init, action) {
         workbooksById: obj
       }
     }
-    case 'UPDATE_FAVORITE_SYMBOL': {
-      return {fav: false};
+      //need to get a list of all the favorites here and update all favorite icons appropriately
+    case 'UPDATE_FAVORITE_WORKBOOKS': {
+      return {listOfFavorites: action.listOfFavorites};
     }
   }
   return state
