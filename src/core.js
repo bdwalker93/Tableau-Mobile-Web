@@ -87,8 +87,20 @@ module.exports = function(storage, socket) {
         //})
         //socket.emit('navigate', "/")
       })
-
-
-    }
+    },
+    deleteWorkbookFromFavorites: function(tok, workbookId){
+      return storage.getItem('tokens:'+tok).then(({token, userId, siteId})=>{
+        return tableau.deleteWorkbookFromFavorites(token, siteId, userId, workbookId).then((status) => {
+          console.log("returned from Core::delete workbook", status);
+        });
+      }).catch((err)=> {
+        console.log(err);
+        //socket.emit('action', {
+        //  type: "LOGIN_FAILURE",
+        //  error: err.message
+        //})
+        //socket.emit('navigate', "/")
+      })
+    },
   }
 }

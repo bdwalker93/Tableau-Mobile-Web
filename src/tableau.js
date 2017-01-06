@@ -139,7 +139,6 @@ console.log("in tableau sign in");
     });
   },
   deleteWorkbookFromFavorites: (token, siteId, userId, workbookId) => {
-    //TODO: might want to change the favorite label to something other than the workbookId
     return new Promise(function(resolve, reject) {
       request({
         method: 'DELETE',
@@ -149,15 +148,13 @@ console.log("in tableau sign in");
         },
       }, function (error, response, body) {
         if (error) return reject(error);
-        if (response.statusCode !== 200) {
+        //404 = workbook is not a favorite
+        if (response.statusCode !== 200 && response.statusCode !== 404) {
           reject(response.statusCode);
         }
-        else{
-        xml2js.parseString(body, function(err, res) {
-          if ( err ) return reject(error);
-          resolve(res.tsResponse.favorites[0].favorite);
-        });
-        }
+        
+        resolve(response.statusCode);
+
       })
     });
   },

@@ -36,6 +36,8 @@ storage.init({
           return core.loadWorkbooks(action.meta.token);
         case 'SET_FAVORITE_WORKBOOK':
           return core.addWorkbookToFavorites(action.meta.token, action.workbookId);
+        case 'DELETE_FAVORITE_WORKBOOK':
+          return core.deleteWorkbookFromFavorites(action.meta.token, action.workbookId);
       }
     });
   });

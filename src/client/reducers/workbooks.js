@@ -24,6 +24,9 @@ export default function(state = init, action) {
         workbooksById: obj
       }
     }
+    case 'UPDATE_FAVORITE_SYMBOL': {
+      return {fav: false};
+    }
   }
   return state
 }
